@@ -1,27 +1,20 @@
+import React, { useState }  from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native'
 import { styles } from './styles'
 
 import { Contest } from '../../components/Contest';
 
 export default function Home() {
-    const contests = 
-    [
-        'Person 1',
-        'Person 2',
-        'Person 3',
-        'Person 4',
-        'Person 5',
-        'Person 6',
-        'Person 7',
-        'Person 8',
-        'Person 9',
-        'Person 10',
-    ];
-
+    const [ contests, setContests ] = useState<string[]>([]);
+    const [ contestName, setContestName ] = useState('');
+    
     function handleContestAdd() {
-        if(contests.includes("Person 1")){
+        if(contests.includes(contestName)){
             return Alert.alert("Contestant already exists", "This constestant already exists, please try to add another name")
         }
+
+        setContests(prevState =>  [...prevState, contestName]);
+        setContestName('');
     }
 
     function handleContestRemove(name : string){
@@ -29,7 +22,11 @@ export default function Home() {
         [
             {
                 text: 'Yes',
-                onPress: () => Alert.alert('Removed!')
+                onPress: () => 
+                { 
+                    setContests(prevState => prevState.filter(item => item !== name));
+                    Alert.alert(`${name} removed!`);
+                }
             },
             {
                 text: 'No',
@@ -39,16 +36,18 @@ export default function Home() {
     }
     
     return (
-        <View style={ styles.container }>
+        <View style={styles.container}>
             <Text style={{ color: 'white', fontSize: 30 }}>Where am I?</Text>
             <Text style={styles.subTitle}>click here and find out!</Text>
 
-            <View style={ styles.form }>
+            <View style={styles.form}>
                 <TextInput 
-                    style={ styles.input }
+                    style={styles.input}
                     placeholder="Contest Name"
                     placeholderTextColor='#6B6B6B'
-                    keyboardType='default'>
+                    keyboardType='default'
+                    onChangeText={setContestName}
+                    value={contestName}>
                 </TextInput>
 
                 <TouchableOpacity 
